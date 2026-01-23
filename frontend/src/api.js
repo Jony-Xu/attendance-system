@@ -40,7 +40,8 @@ export const scheduleAPI = {
   getActive: () => api.get('/schedules/active'),
   create: (data) => api.post('/schedules/', data),
   update: (id, data) => api.put(`/schedules/${id}`, data),
-  activate: (id) => api.post(`/schedules/${id}/activate`)
+  activate: (id) => api.post(`/schedules/${id}/activate`),
+  delete: (id) => api.delete(`/schedules/${id}`)
 }
 
 export default api

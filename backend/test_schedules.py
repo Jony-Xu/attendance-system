@@ -178,3 +178,29 @@ class TestWorkScheduleAPI:
         )
         assert response.status_code == 200
         assert response.json()["is_active"] is False
+    
+    def test_delete_work_schedule(self, client):
+        """测试删除工作时间"""
+        # 创建工作时间
+        create_response = client.post(
+            "/api/schedules/",
+            json={
+                "name": "待删除的工作时间",
+                "check_in_time": "09:00:00",
+                "check_out_time": "18:00:00"
+            }
+        )
+        schedule_id = create_response.json()["id"]
+        
+        # 删除
+        response = client.delete(f"/api/schedules/{schedule_id}")
+        assert response.status_code == 204
+        
+        # 验证已删除
+        response = client.get(f"/api/schedules/{schedule_id}")
+        assert response.status_code == 404
+    
+    def test_delete_work_schedule_not_found(self, client):
+        """测试删除不存在的工作时间"""
+        response = client.delete("/api/schedules/9999")
+        assert response.status_code == 404

@@ -66,3 +66,12 @@ def activate_work_schedule(schedule_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Work schedule not found")
     
     return db_schedule
+
+
+@router.delete("/{schedule_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_work_schedule(schedule_id: int, db: Session = Depends(get_db)):
+    """删除工作时间安排"""
+    success = crud.delete_work_schedule(db, schedule_id=schedule_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Work schedule not found")
+    return None

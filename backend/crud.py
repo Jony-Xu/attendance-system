@@ -160,3 +160,14 @@ def deactivate_all_schedules(db: Session):
     """停用所有工作时间"""
     db.query(models.WorkSchedule).update({"is_active": False})
     db.commit()
+
+
+def delete_work_schedule(db: Session, schedule_id: int) -> bool:
+    """删除工作时间"""
+    db_schedule = get_work_schedule(db, schedule_id)
+    if db_schedule is None:
+        return False
+    
+    db.delete(db_schedule)
+    db.commit()
+    return True

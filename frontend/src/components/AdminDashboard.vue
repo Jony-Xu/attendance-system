@@ -77,6 +77,12 @@
                   >
                     编辑
                   </button>
+                  <button 
+                    class="ui red button"
+                    @click="confirmDeleteSchedule(schedule)"
+                  >
+                    删除
+                  </button>
                 </div>
               </div>
             </div>
@@ -195,6 +201,22 @@
       </div>
     </div>
 
+    <!-- 删除确认模态框 -->
+    <div v-if="deletingSchedule" class="ui small modal active">
+      <div class="header">确认删除</div>
+      <div class="content">
+        <p>确定要删除工作时间 "<strong>{{ deletingSchedule.name }}</strong>" 吗？</p>
+        <p class="ui warning message">
+          <i class="warning icon"></i>
+          此操作不可撤销！
+        </p>
+      </div>
+      <div class="actions">
+        <button class="ui cancel button" @click="cancelDelete">取消</button>
+        <button class="ui red button" @click="deleteSchedule">确认删除</button>
+      </div>
+    </div>
+
     <!-- 消息提示 -->
     <div v-if="message" :class="['ui message', messageType]" style="margin-top: 1em;">
       <i class="close icon" @click="message = ''"></i>
@@ -219,6 +241,7 @@ export default {
         check_out_time: '18:00'
       },
       editingSchedule: null,
+      deletingSchedule: null,
       queryYear: new Date().getFullYear(),
       queryMonth: new Date().getMonth() + 1,
       queryEmployeeId: '',
@@ -312,6 +335,22 @@ export default {
         await this.loadSchedules()
       } catch (error) {
         this.showMessage('更新失败', 'error')
+      }
+    },
+    confirmDeleteSchedule(schedule) {
+      this.deletingSchedule = schedule
+    },
+    cancelDelete() {
+      this.deletingSchedule = null
+    },
+    async deleteSchedule() {
+      try {
+        await scheduleAPI.delete(this.deletingSchedule.id)
+        this.showMessage('删除成功', 'success')
+        this.deletingSchedule = null
+        await this.loadSchedules()
+      } catch (error) {
+        this.showMessage(error.response?.data?.detail || '删除失败', 'error')
       }
     },
     async loadMonthlyRecords() {
